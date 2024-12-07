@@ -1,0 +1,3 @@
+let sum = fn(arr) {
+    reduce(arr, fn(a, b) {a + b})
+}

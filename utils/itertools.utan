@@ -1,0 +1,14 @@
+let each = fn(arr, index, f) {
+    if (index < len(arr)) {
+        arr[index] = f(arr[index])
+        each(arr, index + 1, f)
+    }
+}
+
+
+let while_ = fn(condition, action) {
+    if(condition()) {
+        action();
+        while_(condition, action)
+    }
+}

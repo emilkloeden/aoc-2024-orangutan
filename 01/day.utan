@@ -1,0 +1,120 @@
+let help = use("./help.utan")
+let utils = use("../utils/utils.utan")
+let itertools = use("../utils/itertools.utan")
+let functools = use("../utils/functools.utan")
+
+
+let testInput = "3   4
+4   3
+2   5
+1   3
+3   9
+3   3
+";
+
+let input = utils.chooseInput(true)
+
+// Bring imported functions into local environment
+let isNull = utils.isNull
+let parse = help.parse
+let while_ = itertools.while_
+let sum = functools.sum
+
+
+let partOne = fn () {
+    let data = parse(input)
+  
+    // Get lists vertically and sort each
+    let left = sort(map(data, fn(arr) {first(arr)} ))
+    let right = sort(map(data, fn(arr) {last(arr)} ))
+
+
+    // Zip the sorted pairs together [[1,1], [2, 1]]
+    let zipped = zip(left, right)
+    
+    // Sort each pair so the larger item is on the left
+    let sorted = map(zipped, help.sortPairs)
+    
+    // Subtract the smaller item in the pair from the larger
+    let differences = map(sorted, fn(arr) { first(arr) - last(arr)})
+    
+    // Sum the pairs
+    let ans = sum(differences)
+
+    puts("Answer to part one:", ans)
+
+}
+
+// Improvements:
+// Don't restart j at 0, restart it at ??
+// Get only distinct instances in left? then add the multiple of the count to sum?
+
+let partTwo = fn() {
+    let data = parse(input);
+
+    // Get lists vertically and sort each
+    let left = sort(map(data, fn(arr) {first(arr)} ))
+    let right = sort(map(data, fn(arr) {last(arr)} ))
+    puts(left)
+    puts(right)
+
+    // Left iteration tracking variable
+    let i = 0;
+    
+    // Right iteration tracking variable
+    let j = 0;
+
+    let f = 0;
+    
+    // Answer tracking variable
+    let ans = 0
+    let iterations = 0
+
+    // Function that will cause while loop to exit 
+    // once array is exhausted
+    let test = fn(x) { return fn() {i < len(x)} }
+    
+    // Body of our while loop
+    let action = fn() {
+        puts(right[j])
+        // If we get to the end of the right array, increment our position in left
+        // and restart at the head of right
+        if (j >= len(right)) {
+            i = i + 1;
+            j = f;
+        }
+        
+        
+        else {
+            // Since our arrays are sorted...
+            // ... if our left variable's value is less than the right variable we can continue searching the left array for a match
+            if (left[i] < right[j]) {
+                i = i + 1;
+                j = f
+            } else {
+                // .. if the values are the same we can add the value of the left variable to our Answer
+                // this is a little unintuitive but it has the same outcome as the instructed behaviour
+                if (left[i] == right[j]) {
+                    ans = ans + left[i]
+                    f = j
+                    j = j + 1
+                } else {
+                    // ...If the left variable is larger than the right variable we need to keep searching the right array
+                    if (left [i] > right[j]) {
+                        j = j + 1
+                    }
+                }
+            }
+        }
+
+
+    }
+
+    while_(test(left), action)
+
+    puts("Answer to part two:", ans)
+
+}
+
+// partOne()
+partTwo()

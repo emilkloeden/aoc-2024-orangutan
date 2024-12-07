@@ -1,0 +1,13 @@
+
+
+let chooseInput = fn(prod) {
+    if (prod) {
+        readFile("input.txt")
+    } else {
+        testInput
+    }
+}
+
+let isNull = fn(obj) {
+    return type(obj) == "NULL"
+}

@@ -1,0 +1,28 @@
+let parse = fn(input) {
+    // Split input on new lines
+    let arr = split(input, "
+");
+    
+    // Convert to [["3","4"]["4","3"]]
+    let arrTwoD = map(arr, 
+        fn(line) {  
+            filter(split(line, "   "), 
+                fn(item) {item != ""}); 
+            }
+        )
+
+    // Remove trailing empty array caused by additional new line
+    arrTwoD = filter(arrTwoD, fn(arr) { len(arr) > 0 })
+    
+    // Convert to [[3,4][4,3]]
+    map(arrTwoD, fn(arr) {map(arr, fn(el) { int(el) }) })
+    
+}
+
+let sortPairs = fn(arr) {
+    if (first(arr) > last(arr)) {
+        [first(arr), last(arr)]
+    } else {
+        [last(arr), first(arr)]
+    }
+}
