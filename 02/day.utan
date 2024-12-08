@@ -1,9 +1,11 @@
+let lib = use("./lib.utan")
 let utils = use("../utils/utils.utan")
 let itertools = use("../utils/itertools.utan")
 
-let each = itertools.each
 let while_ = itertools.while_
-let isNull = utils.isNull
+let any = itertools.any
+
+let parse = lib.parse
 
 let testInput = "7 6 4 2 1
 1 2 7 8 9
@@ -14,59 +16,42 @@ let testInput = "7 6 4 2 1
 
 let input = utils.chooseInput(true)
 
-let parse = fn(input) {
-    let records = split(input, "
-")
-    let arrTwoD = map(records, fn (record) {
-        map(split(record, " "), fn(level) {
-            int(level)
-        })
-    })
-    // puts(arrTwoD);
-    arrTwoD
-}
 
-let isIncreasingSafely = fn(a, b) {
-    a < b && b - a < 4
-}
-
-let isDecreasingSafely = fn(a, b) {
-    a > b && a - b < 4
-}
 
 let partOne = fn(input) {
     let data = parse(input)
-    // each(data, 0, puts)
-    // let levels = data[0]
-    // each(levels, 0, puts)
-    
-    let ok = true;
-    let f = fn(levels) {
-        let i = 0
-        let chosenDirectionFn = if (levels[0] < levels[1]) {
-            isIncreasingSafely
-        } else {
-            isDecreasingSafely
-        }
-        while_(fn() {i < len(levels) - 1}, fn() {
-            ok = true
-            // puts("i:", i, "levels[i]:", levels[i] , "levels[i+1]:", levels[i+1], "!chosenDirectionFn(levels[i], levels[i+1]", !chosenDirectionFn(levels[i], levels[i+1]))
-            if (!chosenDirectionFn(levels[i], levels[i+1])) {
-                ok = false;
-                // puts("oks:", ok);
-                // Hack to exit the entire while loop
-                i = len(levels)
-            }
-            
-            i = i + 1
-        })
-        // puts("ok:", ok)
-        return ok
-    }
-    let ans = len(filter(data, f))
+    let safe = filter(data, fn(levels) {lib.isRecordSafe(levels, true)})
+    let ans = len(safe)
     puts("Answer to part one:", ans)
 }
 
-
-
 partOne()
+
+
+let partTwo = fn(input) {
+    // For this part we know all the safe records are safe
+    // So we just need to test the unsafe records and add
+    // the count of "newly" safe records to the known count
+    // This saves testing 663 records
+    // Which is good because this implementation is pretty slow
+    // get all permutations of each record save one level each
+    // then if any are safe, add that to our count.
+    
+    let data = parse(input)
+    
+    let unsafe = filter(data, fn(levels) {!lib.isRecordSafe(levels, true)})
+    let ans = len(data) - len(unsafe)
+    
+    let i = 0
+    while_(fn() {i < len(unsafe)}, fn() {
+        let ps = lib.permutations(unsafe[i])
+        if (any(ps, fn(p) {lib.isRecordSafe(p, true)})) {
+            ans = ans + 1
+        }
+        i = i + 1
+    })
+    puts("Answer to part two:", ans)
+
+}
+
+partTwo()

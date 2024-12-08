@@ -1,0 +1,73 @@
+let itertools = use("../utils/itertools.utan")
+
+let parse = fn(input) {
+    let records = split(input, "
+");
+    map(records, fn (record) {
+        map(split(record, " "), fn(level) {
+            int(level)
+        })
+    })
+}
+
+let isIncreasingSafely = fn(a, b) {
+    a < b && b - a < 4
+}
+
+let isDecreasingSafely = fn(a, b) {
+    a > b && a - b < 4
+}
+
+let chooseDirection = fn (levels) {
+    let f = first(levels)
+    let r = rest(levels)
+    let next = first(r)
+    if (f == next) {
+        return chooseDirection(r)
+    }
+    return f < next
+}
+
+let isRecordSafe = fn(levels, ok) {
+    let i = 0
+
+    // This is a short-cut, we can perform because we only include
+    // records that all increase or all decrease
+    // by checking the first two levels first
+    // we can call just one of these two functions on each pair
+    // in a record
+    let chosenDirectionFn = if (first(levels) < first(rest(levels))) {
+        isIncreasingSafely
+    } else {
+        isDecreasingSafely
+    }
+    itertools.while_(fn() {i < len(levels) - 1}, fn() {
+        // This odd reassignment here and below and the 
+        // reassignment of i to len(levels)
+        // is a hack around not having a break statement
+        // and the return statement only exiting
+        // the callback
+        ok = true
+        if (!chosenDirectionFn(levels[i], levels[i+1])) {
+            ok = false;
+            i = len(levels)
+        }    
+        i = i + 1
+    })
+    return ok
+}
+
+
+
+
+// Too specific to 2/2
+let permutations = fn (arr) {
+    let i = 0
+    let n = []
+    itertools.while_(fn() {i < len(arr)}, fn() {
+        n = append(n, itertools.remove(arr, i))
+        i = i + 1
+    })
+    return n
+}
+
