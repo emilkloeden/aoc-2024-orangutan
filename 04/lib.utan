@@ -1,0 +1,65 @@
+
+let itertools = use("../utils/itertools.utan")
+let functools = use("../utils/functools.utan")
+
+let splitTransformJoin = fn(listStr, cb) {
+    let matrix = map(listStr, fn(el) {split(el, "")})
+    let transformed = cb(matrix)
+    map(transformed, fn(el) {join(el,"")})
+}
+
+let reverseEach = fn(listStr) {
+    map(listStr, fn(arr) { join (itertools.reverse(split(arr, "")),"")})
+}
+
+
+let northSouth = fn(matrix) {
+    let out = [];
+    let rows = len(matrix)
+    let cols = len(matrix[0])
+
+    let i = 0;
+    while_(fn() {i < cols}, fn() {
+        let newRow = [];
+        let j = 0;
+        while_(fn() {j < rows}, fn() {
+            newRow = append(newRow, matrix[j][i])
+            j = j + 1
+        })
+        out = append(out, newRow);
+        i = i + 1;
+    })
+    out;
+}
+
+let northEastSouthWest = fn(matrix) {
+    let out = [];
+    let rows = len(matrix)
+    let cols = len(matrix[0])
+
+    let i = 0;
+    while_(fn() {i < rows + cols - 1}, fn() {
+        let newRow = [];
+        let j = 0;
+        while_(fn() {j < rows}, fn() {
+            let col = i - j
+            if (0 <= col && col < cols) {
+                let value = matrix[j][col]
+                if (type(value) == "STRING") {
+                    newRow = append(newRow, matrix[j][col])
+                }
+            }
+            j = j + 1
+        })
+        out = append(out, newRow);
+        i = i + 1;
+    })
+    out;
+}
+
+
+let sum = fn(arrOfStrings, needle) {
+    functools.sum(map(arrOfStrings, fn(str) {
+        itertools.count(split(str,""), split(needle,"")) 
+    }))
+}

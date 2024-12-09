@@ -1,10 +1,65 @@
+let lib = use("./lib.utan")
 let utils = use("../utils/utils.utan")
+let itertools = use("../utils/itertools.utan")
+let functools = use("../utils/functools.utan")
+let while_ = itertools.while_
 
-testInput = ""
+let testInput = "MMMSXXMASM
+MSAMXMSMSA
+AMXSXMAAMM
+MSAMASMSMX
+XMASAMXAMM
+XXAMMXXAMA
+SMSMSASXSS
+SAXAMASAAA
+MAMMMXMMMM
+MXMXAXMASX"
 
 let input = utils.chooseInput(true)
 
-let partOne = fn () {}
+let data = split(input,"
+")
+
+
+
+let partOne = fn () {
+    let WORD = "XMAS";
+
+    
+    let eastWest = data;
+    let westEast = lib.reverseEach(data)
+    let northSouth = lib.splitTransformJoin(data, lib.northSouth)
+    let southNorth = lib.reverseEach(lib.splitTransformJoin(data, lib.northSouth))
+    let northEastSouthWest = lib.splitTransformJoin(data, lib.northEastSouthWest)
+    
+    // reverse list of strings so the bottom string is oat the top
+    let bottomToTop = itertools.reverse(data)
+    
+    let southEastNorthWest = lib.splitTransformJoin(bottomToTop, lib.northEastSouthWest)
+    let northWestSouthEast = lib.splitTransformJoin(westEast, lib.northEastSouthWest)
+    let bottomToTopReversed = itertools.reverse(westEast)
+    let southWestNorthEast = lib.splitTransformJoin(bottomToTopReversed, lib.northEastSouthWest)
+
+    let countEastWest = lib.sum(eastWest, WORD)
+    let countWestEast = lib.sum(westEast, WORD)
+    let countNorthSouth = lib.sum(northSouth, WORD)
+    let countSouthNorth = lib.sum(southNorth, WORD)
+    let countNorthEastSouthWest = lib.sum(northEastSouthWest, WORD)
+    let countSouthEastNorthWest = lib.sum(southEastNorthWest, WORD)
+    let countNorthWestSouthEast = lib.sum(northWestSouthEast, WORD)
+    let countSouthWestNorthEast = lib.sum(southWestNorthEast, WORD)
+    let total = functools.sum([
+        countEastWest,
+        countWestEast,
+        countNorthSouth,
+        countSouthNorth,
+        countNorthEastSouthWest,
+        countSouthEastNorthWest,
+        countNorthWestSouthEast,
+        countSouthWestNorthEast]
+    )
+    puts("Answer to part one:", total)
+}
 let partTwo = fn () {}
 
 partOne()
