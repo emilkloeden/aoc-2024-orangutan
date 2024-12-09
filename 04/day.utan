@@ -60,7 +60,29 @@ let partOne = fn () {
     )
     puts("Answer to part one:", total)
 }
-let partTwo = fn () {}
+let partTwo = fn () {
+    let matrix = map(data, fn(str) {split(str,"")})
+    let i = 1
+    let ans = 0
+    while_(fn(){i < len(matrix) - 1}, fn() {
+        let j = 1
+        while_(fn(){j < len(matrix[i]) - 1}, fn() {
+            if (matrix[i][j] == "A") {
+                if (
+                    (matrix[i-1][j-1] == "S" && matrix[i+1][j+1] == "M" && matrix[i-1][j+1] == "S" && matrix[i+1][j-1] == "M") 
+                    || (matrix[i-1][j-1] == "M" && matrix[i+1][j+1] == "S" && matrix[i-1][j+1] == "M" && matrix[i+1][j-1] == "S")
+                    || (matrix[i-1][j-1] == "S" && matrix[i+1][j+1] == "M" && matrix[i-1][j+1] == "M" && matrix[i+1][j-1] == "S")
+                    || (matrix[i-1][j-1] == "M" && matrix[i+1][j+1] == "S" && matrix[i-1][j+1] == "S" && matrix[i+1][j-1] == "M") 
+                    ) {
+                    ans = ans + 1
+                }
+            }
+            j = j + 1
+        })
+        i = i + 1
+    })
+    puts("Answer to part two:", ans)
+}
 
-partOne()
-// partTwo()
+// partOne()
+partTwo()
