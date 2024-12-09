@@ -2,7 +2,7 @@ let utils = use("../utils/utils.utan")
 
 testInput = ""
 
-let input = utils.chooseInput(true)
+let input = utils.chooseInput(false)
 
 let partOne = fn () {}
 let partTwo = fn () {}

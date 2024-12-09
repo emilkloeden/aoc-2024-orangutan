@@ -50,3 +50,61 @@ let remove = fn (arr, index) {
     })
     n
 }
+
+let contains = fn(haystack, needle) {
+    let ans = false
+    let haystackLength = len(haystack)
+    let needleLength = len(needle)
+    let i = 0
+    while_(fn() {i < haystackLength - needleLength }, fn() {
+        let j = 0;
+        let break = false
+        while_(fn() {j < needleLength && !break}, fn() {
+            if (haystack[i+j] != needle[j]) {
+                break = true
+            }
+            j = j + 1
+        })
+        if (!break) {
+            ans = true
+        }
+
+        i = i + 1
+    })
+    return ans;
+}
+
+let count = fn(haystack, needle) {
+    let ans = 0
+    let haystackLength = len(haystack)
+    let needleLength = len(needle)
+    let i = 0
+    while_(fn() {i < haystackLength + 1 - needleLength }, fn() {
+        let j = 0;
+        let break = false
+        while_(fn() {j < needleLength && !break}, fn() {
+            if (haystack[i+j] != needle[j]) {
+                break = true
+            }
+            j = j + 1
+        })
+        if (!break) {
+            ans = ans + 1
+        }
+
+        i = i + 1
+    })
+    return ans;
+}
+
+let reverse = fn(arr) {
+    let i = 0;
+    let length = len(arr)
+    let out = [];
+    while_(fn() {i < length}, fn() {
+        let l = arr[length - i - 1]
+        out = append(out, l)
+        i = i + 1
+    });
+    out
+}
