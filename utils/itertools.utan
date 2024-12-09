@@ -12,3 +12,41 @@ let while_ = fn(condition, action) {
         while_(condition, action)
     }
 }
+
+
+let any = fn(arr, cb) {
+    let i = 0
+    let res = false
+    while_(fn () {i < len(arr) && !res}, fn() {
+        if (cb(arr[i])) {
+            res = true
+        }
+        i = i + 1
+    })
+    res
+}
+
+
+let all = fn(arr, cb) {
+    let i = 0
+    let res = true
+    while_(fn () {i < len(arr) && res}, fn() {
+        if (!cb(arr[i])) {
+            res = false
+        }
+        i = i + 1
+    })
+    res
+}
+
+let remove = fn (arr, index) {
+    let i = 0
+    let n = [];
+    while_(fn() {i < len(arr)}, fn() {
+        if (i != index) {
+            n = append(n, arr[i])
+        }
+        i = i + 1
+    })
+    n
+}

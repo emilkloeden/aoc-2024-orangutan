@@ -1,0 +1,11 @@
+let utils = use("../utils/utils.utan")
+
+testInput = ""
+
+let input = utils.chooseInput(true)
+
+let partOne = fn () {}
+let partTwo = fn () {}
+
+partOne()
+// partTwo()
