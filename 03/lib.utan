@@ -1,0 +1,76 @@
+let checkForAbility = fn(text, pos) {
+    if(text[pos+1] == "o" && text[pos+2] == "(" && text[pos+3] == ")") {
+        return [pos + 4, true]
+    }
+    if(text[pos+1] == "o" && text[pos+2] == "n" && text[pos+3] == "'" && text[pos+4] == "t" && text[pos+5] == "(" && text[pos+6] == ")") {
+        return [pos + 7, false]
+    }
+    return [pos + 1]
+}
+
+
+let isDigit = fn(char) {
+    char == "0" ||
+    char == "1" ||
+    char == "2" ||
+    char == "3" ||
+    char == "4" ||
+    char == "5" ||
+    char == "6" ||
+    char == "7" ||
+    char == "8" ||
+    char == "9"
+}
+
+let readString = fn(text, pos) {
+    let tally = 0;
+    let initPos = pos
+    if (!(text[pos+1] == "u" && text[pos+2] == "l" && text[pos+3] == "(")) {
+        pos = pos + 1
+        return [pos, 0]
+    }
+    pos = pos + 4
+    let break = false
+    while_(fn() {!isNull(text[pos]) && text[pos+1] != ")" && !break}, fn() {
+        let digitsOne = []
+        if (!isDigit(text[pos])) {
+            break = true
+            pos = pos + 1
+            return [pos, 0]
+        }
+        while_(fn(){isDigit(text[pos])}, fn() {
+            digitsOne = append(digitsOne, text[pos])
+            pos = pos + 1
+        })
+        if (text[pos] != ",") {
+            break = true
+            pos = pos + 1
+            return [pos, 0]
+        }
+
+        pos = pos + 1
+        let digitsTwo = []
+        if (!isDigit(text[pos])) {
+            break = true
+            pos = pos + 1
+            return [pos, 0]
+        }
+        while_(fn(){isDigit(text[pos])}, fn() {
+            digitsTwo = append(digitsTwo, text[pos])
+            pos = pos + 1
+        })
+        if (text[pos] != ")") {
+            break = true
+            pos = pos + 1
+            return [pos, 0]
+        }
+        let digitsOne = join(digitsOne,"")
+        let digitsTwo = join(digitsTwo, "")
+        let x = text[initPos] + text[initPos+1] + text[initPos+2] + text[initPos+3] + digitsOne + "," + digitsTwo
+        tally = tally + (int(digitsOne) * int(digitsTwo))
+        break = true
+        pos = pos + 1
+        return [pos, tally]
+    });
+    return [pos, tally];
+}

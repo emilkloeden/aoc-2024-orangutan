@@ -1,79 +1,11 @@
 let while_ = use("../utils/itertools.utan").while_
 let utils = use("../utils/utils.utan");
 let isNull = utils.isNull
+let lib = use("./lib.utan")
+let readString = lib.readString
+let checkForAbility = lib.checkForAbility
 
 let testInput = "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))";
-
-
-let globalStr = []
-
-
-let isDigit = fn(char) {
-    char == "0" ||
-    char == "1" ||
-    char == "2" ||
-    char == "3" ||
-    char == "4" ||
-    char == "5" ||
-    char == "6" ||
-    char == "7" ||
-    char == "8" ||
-    char == "9"
-}
-
-let readString = fn(text, pos) {
-    let tally = 0;
-    let initPos = pos
-    if (!(text[pos+1] == "u" && text[pos+2] == "l" && text[pos+3] == "(")) {
-        pos = pos + 1
-        return [pos, 0]
-    }
-    pos = pos + 4
-    let break = false
-    while_(fn() {!isNull(text[pos]) && text[pos+1] != ")" && !break}, fn() {
-        let digitsOne = []
-        if (!isDigit(text[pos])) {
-            break = true
-            pos = pos + 1
-            return [pos, 0]
-        }
-        while_(fn(){isDigit(text[pos])}, fn() {
-            digitsOne = append(digitsOne, text[pos])
-            pos = pos + 1
-        })
-        if (text[pos] != ",") {
-            break = true
-            pos = pos + 1
-            return [pos, 0]
-        }
-
-        pos = pos + 1
-        let digitsTwo = []
-        if (!isDigit(text[pos])) {
-            break = true
-            pos = pos + 1
-            return [pos, 0]
-        }
-        while_(fn(){isDigit(text[pos])}, fn() {
-            digitsTwo = append(digitsTwo, text[pos])
-            pos = pos + 1
-        })
-        if (text[pos] != ")") {
-            break = true
-            pos = pos + 1
-            return [pos, 0]
-        }
-        let digitsOne = join(digitsOne,"")
-        let digitsTwo = join(digitsTwo, "")
-        let x = text[initPos] + text[initPos+1] + text[initPos+2] + text[initPos+3] + digitsOne + "," + digitsTwo
-        tally = tally + (int(digitsOne) * int(digitsTwo))
-        break = true
-        pos = pos + 1
-        return [pos, tally]
-    });
-    return [pos, tally];
-}
-
 
 let partOne = fn(input) {
     let ans = 0
@@ -95,5 +27,43 @@ let partOne = fn(input) {
     puts("Answer to part one:", ans)
 }
 
+
+
+let partTwo = fn(input) {
+    let ans = 0
+    let textArr = split(input,"")
+    let enabled = true;
+    let parse = fn(text, pos) {
+        if (pos < len(text)) {
+            if (text[pos] == "d") {
+                let res = checkForAbility(text, pos)
+                pos = res[0]
+                let value = res[1]
+                if (!isNull(value)) {
+                    enabled = value
+                }
+                parse(text, pos)
+            } else {
+                if (text[pos] == "m") {
+                    if (enabled) {
+                        let res = readString(text, pos)
+                        pos = res[0]
+                        ans = ans + res[1];
+                        parse(text, pos)
+                    } else {
+                        parse(text, pos+1)
+                    }
+                } else {
+                    parse(text, pos+1)
+                }
+            }
+
+        }
+    }
+    parse(textArr,0)
+    puts("Answer to part two:", ans)
+}
+
 let input = utils.chooseInput(true)
 partOne(input)
+partTwo(input)
