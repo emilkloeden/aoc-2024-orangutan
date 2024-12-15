@@ -1,11 +1,116 @@
 let utils = use("../utils/utils.utan")
+let itertools = use("../utils/itertools.utan")
+let while = itertools.while_
+let reverse = itertools.reverse
+let isNull = utils.isNull
 
-testInput = ""
 
-let input = utils.chooseInput(false)
+let testInput = "47|53
+97|13
+97|61
+97|47
+75|29
+61|13
+75|53
+29|13
+97|29
+53|29
+61|53
+97|53
+61|29
+47|13
+75|47
+97|75
+47|61
+75|61
+47|29
+75|13
+53|13
 
-let partOne = fn () {}
+75,47,61,53,29
+97,61,53,29,13
+75,29,13
+75,97,47,61,53
+61,13,29
+97,13,75,29,47
+"
+
+let input = utils.chooseInput(true)
+
+
+
+let parse = fn(input) {
+    let rulesAndOrders = split(input,"
+
+")
+    let rules = split(rulesAndOrders[0],"
+")
+    rules = filter(rules, fn(el) {len(el) > 0})
+    rules = map(map(rules, fn(r) {split(r, "|")}), fn(arr) {
+        map(arr, fn(item) {
+            int(item)
+        })
+    })
+
+    let orders = map(split(rulesAndOrders[1],"
+"), fn(set) {split(set, ",")})
+
+    orders = filter(orders, fn(arr) {len(arr) > 1})
+    orders = map(orders, fn(arr) {
+        map(arr, fn(el) {int(el)})
+    })
+    return {
+        "rules": rules,
+        "orders": orders,
+    }
+
+}
+
+// This hack gets around the fact that you can't declare a floating point number
+// in orangutan, but you can accidentally evaluate to one
+let middle = fn(p) {
+    if (((len(p)/2) % 1) > 0) { (len(p) - 1) / 2 } else { (len(p) / 2) - 1 }
+}
+
+let isOrdered = fn(order, rules) {
+    let i = 0
+    let break = false;
+    let ans = true;
+    while(fn(){i < len(order) - 1 && !break}, fn(){
+        let j = 0
+        while(fn(){j < len(rules) && !break}, fn() {
+            let rule = rules[j]
+            if (order[i] == rule[1] && order[i+1] == rule[0]) {
+                ans = false;
+                break = true;
+            }
+            j = j + 1
+        })
+        i = i + 1
+
+    })
+    ans
+}
+
+let partOne = fn () {
+    let data = parse(input)
+    let orders = data.orders
+    let rules = data.rules
+    let i = 0
+    let ans = 0
+    let orderedOrders = []
+    while(fn() {i < len(orders)}, fn() {
+        if(isOrdered(orders[i], rules)) {
+            orderedOrders = append(orderedOrders, orders[i])
+            ans = ans + orders[i][middle(orders[i])]
+        }
+        i = i + 1
+    })
+    puts("Answer to part one:", ans)
+   
+}
 let partTwo = fn () {}
 
 partOne()
+
 // partTwo()
