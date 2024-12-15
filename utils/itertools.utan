@@ -13,7 +13,6 @@ let while_ = fn(condition, action) {
     }
 }
 
-
 let any = fn(arr, cb) {
     let i = 0
     let res = false
