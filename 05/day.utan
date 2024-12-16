@@ -109,8 +109,68 @@ let partOne = fn () {
     puts("Answer to part one:", ans)
    
 }
-let partTwo = fn () {}
 
-partOne()
+let partTwo = fn () {
+    let data = parse(input)
+    let orders = data.orders
+    let rules = data.rules
+    let i = 0
+    let ans = 0
+    let unorderedOrders = []
+    while(fn() {i < len(orders)}, fn() {
+        if(!isOrdered(orders[i], rules)) {
+            unorderedOrders = append(unorderedOrders, orders[i])
+        }
+        i = i + 1
+    })
 
-// partTwo()
+    let sortFn = fn(a, b) {
+        let i = 0
+        let break = false
+        let ans = 0
+
+        // Filtering here because built-in (native) `filter` is much, much faster than the if clauses below
+        let relatedRules = filter(rules, fn(rule) {
+            rule[0] == a || rule[1] == a || rule[0] == b || rule[1] == b
+        })
+        let countRules = len(relatedRules)
+
+        while(fn(){i < countRules && !break}, fn(){
+            let rule = relatedRules[i]
+            if (rule[0] == a && rule[1] == b) {
+                ans = -1
+                break = true
+            } else {
+                if (rule[1] == a && rule[0] == b) {
+                    ans = 1
+                    break = true
+                }
+            }
+            i = i + 1
+        })
+        ans
+    }
+
+    let sorted = map(
+        unorderedOrders, 
+        fn(arr) { 
+            sort(
+                arr, 
+                sortFn
+            )
+        }
+    )
+    let i = 0
+    while(fn() {i< len(sorted)}, fn() {
+        let order = sorted[i]
+        // Got the NUMBER type working prior to partTwo, so this is much, much cleaner than using the middle() function used in partOne
+        let index = int(len(order)/2)
+        ans = ans + order[index]
+        i = i + 1
+    })
+    puts("Answer to part two:", ans)
+}
+
+// partOne()
+
+partTwo()
