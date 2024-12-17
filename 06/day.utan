@@ -1,11 +1,132 @@
 let utils = use("../utils/utils.utan")
+let itertools = use("../utils/itertools.utan")
+let lib = use("./lib.utan")
+let parse = lib.parse
+let while = itertools.while_
 
-testInput = ""
 
-let input = utils.chooseInput(false)
 
-let partOne = fn () {}
-let partTwo = fn () {}
+let input = utils.chooseInputFromFiles(true)
+
+let data = parse(input)
+
+let mapHeight = len(data.map)
+let mapWidth = len(data.map[0])
+
+let isOffMap = fn(pos) {
+    let y = pos[0]
+    let x = pos[1]
+    if (y < 0 || y >= mapHeight || x < 0 || x >= mapWidth) {
+        return true
+    }
+    return false
+}
+
+let wouldHitObstacle = fn(position, obstacles) {
+    puts(obstacles)
+    return len(filter(obstacles, fn(o) {
+        let line = o[0]
+        let col = o[1]
+        return line == position[0] && col == position[1]
+    })) > 0
+}
+
+
+let next = fn(guard, obstacles, done) {
+    let direction = guard[0]
+    let position = guard[1]
+    let y = position[0]
+    let x = position[1]
+    if (direction == "^") {
+        let nextPos = [y-1, x]
+        if (wouldHitObstacle(nextPos, obstacles)) {
+            puts("Turned right > ")
+            return [">", position, false]
+        }
+        if (isOffMap(nextPos)) {
+            puts("finished, now off map at:", y, x)
+            return [direction, position, true]
+        }
+        return [direction, nextPos, false]
+    }
+    if (direction == ">") {
+        let nextPos = [y, x+1]
+        if (wouldHitObstacle(nextPos, obstacles)) {
+            puts("Turned down v ")
+            return ["v", position, false]
+        }
+        if (isOffMap(nextPos)) {
+            puts("finished, now off map at:", y, x)
+            return [direction, position, true]
+        }
+        return [direction, nextPos, false]
+    }
+    if (direction == "v") {
+        let nextPos = [y+1, x]
+        if (wouldHitObstacle(nextPos, obstacles)) {
+            puts("Turned left < ")
+            return ["<", position, false]
+        }
+        if (isOffMap(nextPos)) {
+            puts("finished, now off map at:", y, x)
+            return [direction, position, true]
+        }
+        return [direction, nextPos, false]
+    }
+    if (direction == "<") {
+        let nextPos = [y, x-1]
+        if (wouldHitObstacle(nextPos, obstacles)) {
+            puts("Turned up ^ ")
+            return ["^", position, false]
+        }
+        if (isOffMap(nextPos)) {
+            puts("finished, now off map at:", y, x)
+            return [direction, position, true]
+        }
+        return [direction, nextPos, false]
+    }
+
+}
+
+let partOne = fn () {
+    let guard = [data.direction, data.guard, false]
+    let position = guard[1]
+    let posStr = str(position[0]) + "," + str(position[1])
+    let done = false
+    let visited = {posStr: true}
+    let i = 1
+    while(fn() { !done }, fn() {
+        puts("iteration:", i)
+        guard = next(guard, data.obstacles, done)
+        position = guard[1]
+        done = guard[2]
+        posStr = str(position[0]) + "," + str(position[1])
+        visited[posStr] = true
+        i = i + 1
+    })
+    let ans = len(keys(visited))
+    puts("Answer to part one:", ans)
+}
+let partTwo = fn () {
+    let guard = [data.direction, data.guard, false]
+    let direction = guard[0]
+    let position = guard[1]
+    let posStr = direction + str(position[0]) + "," + str(position[1])
+    let done = false
+    let visited = {posStr: true}
+    let i = 1
+    while(fn() { !done }, fn() {
+        puts("iteration:", i)
+        guard = next(guard, data.obstacles, done)
+        position = guard[1]
+        done = guard[2]
+        posStr = direction + str(position[0]) + "," + str(position[1])
+        visited[posStr] = true
+        i = i + 1
+    })
+    let ans = len(keys(visited))
+    puts("Answer to part one:", ans)
+}
 
 partOne()
 // partTwo()

@@ -1,0 +1,44 @@
+let itertools = use("../utils/itertools.utan")
+let flatten = itertools.flatten
+
+let parse = fn(input) {
+    let lines = split(input,"
+")
+    let data = map(lines, fn(line) {
+        split(line,"")
+    })
+    
+    let line = -1
+    let actors = map(data, fn(lineData) {
+        let col = -1
+        line = line + 1
+        return map(lineData, fn(ch) {
+            col = col + 1
+            return [line, col, ch]
+        })
+    })
+
+    actors = flatten(actors)
+
+    actors = filter(actors, fn(el) {
+        let d = el[2];
+        return d != "."
+    })
+    let obstacles = filter(actors, fn(el) {
+        let d = el[2];
+        return d == "#"
+
+    })
+    let guard = filter(actors, fn(el) {
+        let d = el[2];
+        return d == "^"
+    })[0]
+    let direction = guard[2]
+    let guard = [guard[0], guard[1]]
+    {
+        "map": data,
+        "obstacles": obstacles,
+        "guard": guard,
+        "direction": direction
+    }
+}
